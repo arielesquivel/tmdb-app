@@ -1,24 +1,37 @@
-import logo from './logo.svg';
-import './App.css';
-
+import React, { useEffect } from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Navbar from "./componentes/Navbar";
+import Register from "./componentes/Register";
+import Login from "./componentes/Login";
+import Card from "./componentes/Card";
+import Home from "./componentes/Home";
+import Favortios from "./componentes/Favortios";
+import { useDispatch } from "react-redux";
+import { setUser } from "./store/user";
+import axios from "axios";
 function App() {
+  const dispatch = useDispatch();
+  //useEffect para que se ejecute al cargar la página.
+  useEffect(() => {
+    axios
+      .get("http://localhost:5000/api/me", { withCredentials: true })
+      .then((response) => {
+        dispatch(setUser(response.data));
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<Navbar />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/login/register" element={<Register />} />
+        <Route path="/movie/:id" element={<Home />} />
+        <Route path="/favoritos" element={<Favortios />} />
+      </Routes>
+    </Router>
   );
 }
 
